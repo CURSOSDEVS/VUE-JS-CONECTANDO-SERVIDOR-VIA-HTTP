@@ -1,6 +1,11 @@
 <template>
 	<div id="app" class="container">
 		<h1>HTTP com Axios</h1>
+		<b-alert show dismissible 
+				v-for="mensagem in mensagens"
+				:key="mensagem.texto"
+				:variant="mensagem.tipo"
+				>{{mensagem.texto}}</b-alert>
 		<b-card>
 			<b-form-group label="Nome:">
 				<b-form-input 
@@ -50,6 +55,7 @@
 export default {
 	data() {
 		return {
+			mensagens: [],
 			usuario:{
 				nome:'',
 				email:''
@@ -62,7 +68,8 @@ export default {
 		limpar(){
 			this.usuario.nome=''
 			this.usuario.email=''
-			this.id= null
+			this.id= null,
+			this.mensagens = []
 		},
 		salvar(){
 			// //configuração global do axios
@@ -82,7 +89,27 @@ export default {
 			const finalUrl = this.id ? `/${this.id}.json` : '.json'
 
 			this.$http[metodo](`/usuarios${finalUrl}`, this.usuario)
-				.then(()=>{this.limpar()})
+				.then(()=>{
+					this.limpar()
+					// metodo =  'patch' ? this.mensagens.push({
+					// 		texto: 'Usuário alterado com sucesso !',
+					// 		tipo: 'info'
+					// 	}) : this.mensagens.push({
+					// 		texto: 'Usuário cadastrado com sucesso !',
+					// 		tipo: 'info'
+					// 	})
+					if(metodo === 'patch'){
+						this.mensagens.push({
+							texto: 'Usuário alterado com sucesso !',
+							tipo: 'warning'
+						})
+					}else{
+						this.mensagens.push({
+							texto: 'Usuário cadastrado com sucesso !',
+							tipo: 'success'
+						})
+					}
+				})
 		},
 		obterUsuarios(){
 			this.$http.get('usuarios.json').then(resp => {
@@ -106,6 +133,15 @@ export default {
 		excluir(id){
 			this.$http.delete(`/usuarios/${id}.json`).then(()=>{
 				this.limpar()
+				this.mensagens.push({
+					texto: 'Usuário apagado !',
+					tipo: 'info'
+				})
+			}).catch(err =>{
+				this.mensagens.push({
+					texto: 'Erro ao excluir usuário !',
+					tipo: 'danger'
+				})
 			})
 		}
 	},
