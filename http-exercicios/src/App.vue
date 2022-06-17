@@ -35,14 +35,18 @@
 				v-for="(usuario, i) in usuarios" :key="usuario.i">
 				<span>Usuario: {{usuario.nome}}</span><br>
 				<span>email: {{usuario.email}}</span><br>
-				<span>ID: {{i}}}</span><br>
+				<span>ID: {{i}}</span><br>
+				<b-button variant="warning" size="lg"
+					@click="carregar(i)">Carregar</b-button>
+				<b-button variant="danger" size="lg"
+					@click="excluir(i)" class="ml-2">Excluir</b-button>
 			</b-list-group-item>
 		</b-list-group>
 	</div>
 </template>
 
 <script>
-import axios from 'axios'
+// import axios from 'axios'
 export default {
 	data() {
 		return {
@@ -50,22 +54,35 @@ export default {
 				nome:'',
 				email:''
 			},
+			id: null,
 			usuarios:[]
 		}
 	},
 	methods: {
+		limpar(){
+			this.usuario.nome=''
+			this.usuario.email=''
+			this.id= null
+		},
 		salvar(){
-			//configuração global do axios
-			this.$http.post('usuarios.json', this.usuario).then(resp =>{
-				this.usuario.nome = ''
-				this.usuario.email = ''			
-			})
+			// //configuração global do axios
+			// this.$http.post('usuarios.json', this.usuario).then(() =>{
+			// 	this.limpar()			
+			// })
 
 			//axios localmente
 			// axios.post('https://curso-vue-4e8bd-default-rtdb.firebaseio.com/usuarios.json', this.usuario).then(resp =>{
 			// 	this.usuario.nome = ''
 			// 	this.usuario.email = ''			
 			// })
+
+			//utilizando o mesmo método para salvar um registro novo
+			//ou alterar um já existente.
+			const metodo = this.id ? 'patch' : 'post'
+			const finalUrl = this.id ? `/${this.id}.json` : '.json'
+
+			this.$http[metodo](`/usuarios${finalUrl}`, this.usuario)
+				.then(()=>{this.limpar()})
 		},
 		obterUsuarios(){
 			this.$http.get('usuarios.json').then(resp => {
@@ -81,7 +98,15 @@ export default {
 			// 	this.usuarios = resp.data 
 			// 	console.log(this.usuarios) })
 
-			
+		},
+		carregar(id){
+			this.id = id
+			this.usuario = { ...this.usuarios[id]}
+		},
+		excluir(id){
+			this.$http.delete(`/usuarios/${id}.json`).then(()=>{
+				this.limpar()
+			})
 		}
 	},
 	// created(){
