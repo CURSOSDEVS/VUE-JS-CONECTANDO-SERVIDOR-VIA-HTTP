@@ -42,6 +42,7 @@
 </template>
 
 <script>
+import axios from 'axios'
 export default {
 	data() {
 		return {
@@ -54,13 +55,25 @@ export default {
 	},
 	methods: {
 		salvar(){
-			this.$http.post('usuarios.json', this.usuario).then(resp =>{
+			//configuração global do axios
+			// this.$http.post('usuarios.json', this.usuario).then(resp =>{
+			// 	this.usuario.nome = ''
+			// 	this.usuario.email = ''			
+			// })
+
+			//axios localmente
+			axios.post('https://curso-vue-4e8bd-default-rtdb.firebaseio.com/usuarios.json', this.usuario).then(resp =>{
 				this.usuario.nome = ''
 				this.usuario.email = ''			
 			})
 		},
 		obterUsuarios(){
-			this.$http.get('usuarios.json').then(resp => {
+			// this.$http.get('usuarios.json').then(resp => {
+			// 	this.usuarios = resp.data 
+			// 	console.log(this.usuarios) })
+
+			//AXIOS LOCALMENTE
+			axios.get('https://curso-vue-4e8bd-default-rtdb.firebaseio.com/usuarios.json').then(resp => {
 				this.usuarios = resp.data 
 				console.log(this.usuarios) })
 		}
