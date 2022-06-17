@@ -32,10 +32,10 @@
 		<hr>
 		<b-list-group>
 			<b-list-group-item 
-				v-for="(usuario, id) in usuarios" :key="usuario.id">
+				v-for="(usuario, i) in usuarios" :key="usuario.i">
 				<span>Usuario: {{usuario.nome}}</span><br>
 				<span>email: {{usuario.email}}</span><br>
-				<span>ID: {{usuario.id}}</span><br>
+				<span>ID: {{i}}}</span><br>
 			</b-list-group-item>
 		</b-list-group>
 	</div>
@@ -70,12 +70,18 @@ export default {
 		obterUsuarios(){
 			this.$http.get('usuarios.json').then(resp => {
 				this.usuarios = resp.data 
-				console.log(this.usuarios) })
+				console.log(this.usuarios)
+				
+				//configurando de forma local o header 'Autrhorization'
+				this.$http.defaults.headers.common['Authorization'] = 'abc123' 
+				})
 
 			//AXIOS LOCALMENTE
 			// axios.get('https://curso-vue-4e8bd-default-rtdb.firebaseio.com/usuarios.json').then(resp => {
 			// 	this.usuarios = resp.data 
 			// 	console.log(this.usuarios) })
+
+			
 		}
 	},
 	// created(){
